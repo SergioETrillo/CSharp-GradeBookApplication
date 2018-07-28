@@ -6,15 +6,6 @@ using GradeBook.Enums;
 
 namespace GradeBook.GradeBooks
 {
-    /*In the RankedGradeBook class create an override for the GetLetterGrade method.
-
-The GetLetterGrade method returns a char and accepts a double named "averageGrade".
-
-If there are less than 5 students throw an InvalidOperationException. (Ranked-grading requires a minimum of 5 students
-to work)
-
-Return 'F' at the end of the method.*/
-
     class RankedGradeBook : BaseGradeBook
     {
         public RankedGradeBook(string name) : base(name)
@@ -24,13 +15,12 @@ Return 'F' at the end of the method.*/
 
         public override char GetLetterGrade(double averageGrade)
         {
-            var studentsCount = Students.Count;
-            if (studentsCount < 5)
+            if (Students.Count < 5)
             {
                 throw new InvalidOperationException("not enough students to calculate grade");
             }
 
-            var gradeThreshold = (int)Math.Ceiling(studentsCount * 0.2);
+            var gradeThreshold = (int)Math.Ceiling(Students.Count * 0.2);
 
             var sortedGrades = Students.OrderByDescending(s => s.AverageGrade).Select(g => g.AverageGrade).ToArray();
 
@@ -55,10 +45,39 @@ Return 'F' at the end of the method.*/
             }
 
             return 'F';
+        }
 
+        /*Create an override for the CalculateStatistics method in the RankedGradeBook class.
 
-            return 'F';
+If there are less than 5 students write "Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade." to the Console, then return from the method.
+
+In there were 5 or more students continue call the base class' method using base.CalculateStatistics();.
+Error
+
+GradeBook.GradeBooks.RankedGradeBook.CalculateStastics did not run the base CalculateStatistics when there was 5 or more students.*/
+
+        public override void CalculateStatistics()
+        {
+            if (Students.Count < 5)
+            {
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
+
+                return;
+            }
+
+            base.CalculateStatistics();
+        }
+
+        public override void CalculateStudentStatistics(string name)
+        {
+            if (Students.Count < 5)
+            {
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
+
+                return;
+            }
+
+            base.CalculateStudentStatistics(name);
         }
     }
-
 }
