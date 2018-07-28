@@ -16,10 +16,13 @@ namespace GradeBook.GradeBooks
 
         public GradeBookType Type { get; set; }
 
-        protected BaseGradeBook(string name)
+        public bool IsWeighted { get; set; }
+
+        protected BaseGradeBook(string name, bool isWeighted)
         {
             Name = name;
             Students = new List<Student>();
+            IsWeighted = isWeighted;
         }
 
         public void AddStudent(Student student)
@@ -108,18 +111,39 @@ namespace GradeBook.GradeBooks
 
         public virtual double GetGPA(char letterGrade, StudentType studentType)
         {
+            /**
+ BaseGradeBook's GetGPA method returns an int based on the student's letter grade (their GPA or Grade Point Average). 
+ When a grade book's IsWeighted property is true and the student type is Honors or DualEnrolled, add 1 to the GPA before
+ returning it.
+
+    An unweighted A is worth 4 points.
+    A weighted A is worth 5 points.
+    An unweighted B is worth 3 points.
+    A weighted B is worth 4 points and so on.
+             */
+            int gpa = 0;
             switch (letterGrade)
             {
                 case 'A':
-                    return 4;
+                    gpa = 4;
+                    break;
                 case 'B':
-                    return 3;
+                    gpa = 3;
+                    break;
                 case 'C':
-                    return 2;
+                    gpa = 2;
+                    break;
                 case 'D':
-                    return 1;
+                    gpa = 1;
+                    break;
             }
-            return 0;
+
+            if (IsWeighted && studentType == StudentType.DualEnrolled || studentType == StudentType.Honors)
+            {
+                gpa++;
+            }
+
+            return gpa;
         }
 
         public virtual void CalculateStatistics()
